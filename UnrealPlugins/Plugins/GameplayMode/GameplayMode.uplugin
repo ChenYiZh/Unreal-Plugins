@@ -1,0 +1,51 @@
+﻿{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0.0",
+  "FriendlyName": "Gameplay Mode",
+  "Description": "游戏模式",
+  "Category": "Foolish Games",
+  "CreatedBy": "ChenYiZh",
+  "CreatedByURL": "http://www.chenyizh.cn",
+  "DocsURL": "https://space.bilibili.com/9308172",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "EnabledByDefault": true,
+  "CanContainContent": true,
+  "IsBetaVersion": true,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "GameplayMode",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "AdditionalDependencies": [
+        "Engine",
+        "CoreUObject",
+        "AIModule",
+        "VirtualInputCore",
+        "FoolishGames",
+        "Framework"
+      ]
+    },
+    {
+      "Name": "GameplayModeEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default",
+      "WhitelistPlatforms": [
+        "Win64",
+        "Mac"
+      ]
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "Framework",
+      "Enabled": true
+    },
+    {
+      "Name": "VirtualInputCore",
+      "Enabled": true
+    }
+  ]
+}

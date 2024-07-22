@@ -1,0 +1,8 @@
+{
+	"BuildId": "25360045",
+	"Modules": 
+	{
+		"Framework": "UnrealEditor-Framework.dll",
+		"FrameworkEditor": "UnrealEditor-FrameworkEditor.dll"
+	}
+}
