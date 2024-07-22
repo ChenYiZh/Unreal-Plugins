@@ -16,3 +16,13 @@ bool UDeviceUtility::IsMobile(const UObject* WorldContextObject)
 	// return Platform == FString("Android") || Platform == FString("IOS");
 	return GetGameDefines<UGameDefines>(WorldContextObject)->GetPlatform() == EPlatform::Mobile;
 }
+
+FString UDeviceUtility::MacAddress()
+{
+	return FPlatformMisc::GetMacAddressString();
+}
+
+FString UDeviceUtility::MachineId()
+{
+	return FPlatformMisc::GetLoginId();
+}
