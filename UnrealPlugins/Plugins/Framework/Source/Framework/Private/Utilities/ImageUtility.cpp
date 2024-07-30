@@ -74,7 +74,7 @@ UTexture2DDynamic* UImageUtility::LoadTextureDynamicFromBytes(const TArray<uint8
 						ENQUEUE_RENDER_COMMAND(FWriteRawDataToTexture)(
 							[TextureResource, RawData = MoveTemp(RawData)](FRHICommandListImmediate& RHICmdList)
 							{
-								TextureResource->WriteRawToTexture_RenderThread(RawData);
+								//TextureResource->WriteRawToTexture_RenderThread(RawData);
 							});
 					}
 					return Texture;

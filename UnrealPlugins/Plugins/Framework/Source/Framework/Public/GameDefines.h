@@ -329,16 +329,16 @@ public:
 #pragma region UI配置
 
 private:
-	/**
-	 * Tips显示的层级
-	*/
-	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess), Category="Framework|Configs|UI")
+	/** 是否使用完整UI队列，如果不使用则遇到相同队列就将前一个相同UI移除 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess), Category="Framework|Configs|UI")
+	bool bUseFullStack = true;
+
+	/** Tips显示的层级 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess), Category="Framework|Configs|UI")
 	int TipWidgetsZOrder = 100000;
 
-	/**
-	* 默认起始层级
-	*/
-	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess), Category="Framework|Configs|UI")
+	/** 默认起始层级 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess), Category="Framework|Configs|UI")
 	int DefaultZOrder = 10;
 
 	// /**
@@ -348,16 +348,16 @@ private:
 	// FString WidgetPath = "/Resources/Widgets";
 
 public:
-	/**
-	 * Tips显示的层级
-	*/
-	UFUNCTION(BlueprintPure, Exec, Category="Framework|Configs|UI", DisplayName="Tip Widgets Zorder")
+	/** 是否使用完整UI队列，如果不使用则遇到相同队列就将前一个相同UI移除 */
+	UFUNCTION(Exec, Category="Framework|Configs|UI")
+	bool UseFullStack() const { return bUseFullStack; }
+
+	/** Tips显示的层级 */
+	UFUNCTION(Exec, Category="Framework|Configs|UI", DisplayName="Tip Widgets Zorder")
 	int GetTipWidgetsZOrder() const;
 
-	/**
-	* 默认起始层级
-	*/
-	UFUNCTION(BlueprintPure, Exec, Category="Framework|Configs|UI", DisplayName="Default Zorder")
+	/** 默认起始层级 */
+	UFUNCTION(Exec, Category="Framework|Configs|UI", DisplayName="Default Zorder")
 	int GetDefaultZOrder() const;
 #pragma endregion
 

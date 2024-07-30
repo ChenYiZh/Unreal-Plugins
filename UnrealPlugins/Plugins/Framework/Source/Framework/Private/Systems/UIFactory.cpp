@@ -4,6 +4,7 @@
 #include "Systems/UIFactory.h"
 
 #include "GameRoot.h"
+#include "Blueprint/GameViewportSubsystem.h"
 #include "Components/OverlaySlot.h"
 #include "Defines/EventIdsBasic.h"
 #include "Log/FConsole.h"
@@ -14,7 +15,7 @@
 
 void UUIFactory::RegistWidget(const FName WidgetKeyName, const FWidgetConfig Config)
 {
-	if (WidgetKeyName.IsNone() || !WidgetKeyName.IsValid() || Config.WidgetPath.IsEmpty())
+	if (WidgetKeyName.IsNone() || !WidgetKeyName.IsValid() || Config.Widget.IsNull())
 	{
 		return;
 	}
@@ -128,7 +129,24 @@ void UUIFactory::BeginPushWidget(const FName& WidgetKeyName, UWidgetParam* Param
 	Event.bIsValid = true;
 
 
-	UWidgetStackInfo* StackInfo = NewObject<UWidgetStackInfo>(this);
+	UWidgetStackInfo* StackInfo = nullptr;
+	if (!GetGameDefines<UGameDefines>(this)->UseFullStack())
+	{
+		for (UWidgetStackInfo* Info : WidgetStack)
+		{
+			if (Info->KeyName == WidgetKeyName)
+			{
+				StackInfo = Info;
+				break;
+			}
+		}
+	}
+
+	if (!IsValid(StackInfo))
+	{
+		StackInfo = NewObject<UWidgetStackInfo>(this);
+	}
+
 	StackInfo->KeyName = WidgetKeyName;
 	StackInfo->Param = Param;
 	StackInfo->bRepaint = true;
@@ -145,7 +163,8 @@ void UUIFactory::BeginPushWidget(const FName& WidgetKeyName, UWidgetParam* Param
 	{
 		FAssetClassCallback Callback;
 		Callback.BindUFunction(this, "OnWidgetClassLoaded");
-		Singleton<UAssetSystem>(this)->LoadWidgetAsync(Config.WidgetPath, Callback);
+		Singleton<UAssetSystem>(this)->LoadWidgetAsync(Config.Widget.ToSoftObjectPath().GetAssetPath().ToString(),
+		                                               Callback);
 		//UAssetSystem::LoadUClassAsync(Config.WidgetPath, Callback);
 	}
 }
@@ -163,7 +182,7 @@ void UUIFactory::OnWidgetClassLoaded(UClass* WidgetClass)
 		UFConsole::WriteErrorWithCategory(TEXT("UI Factory"), FString::Printf(
 			                                  TEXT("调用UIFactory::PushWidget错误，未找到传入界面Key：%s 类型：%s 的文件"),
 			                                  ToCStr(StackEvent.StackInfo->KeyName.ToString()),
-			                                  ToCStr(Config.WidgetPath)));
+			                                  ToCStr(Config.Widget.ToString())));
 		CurrentEvent.Reset();
 		return;
 	}
@@ -175,7 +194,7 @@ void UUIFactory::OnWidgetClassLoaded(UClass* WidgetClass)
 		UFConsole::WriteErrorWithCategory(TEXT("UI Factory"), FString::Printf(
 			                                  TEXT("调用UIFactory::PushWidget错误，未找到传入的类型：%s [%s]的文件或者类型不是BaseWidget的子类"),
 			                                  ToCStr(StackEvent.StackInfo->KeyName.ToString()),
-			                                  ToCStr(Config.WidgetPath)));
+			                                  ToCStr(Config.Widget.ToString())));
 		CurrentEvent.Reset();
 		return;
 	}
@@ -442,9 +461,22 @@ void UUIFactory::ComputeZOrdersAndRepaint()
 			UsedClasses.Add(Info->KeyName);
 			if (Info->Widget->IsInViewport())
 			{
-				Info->Widget->RemoveFromParent();
+				if (UGameViewportSubsystem* Subsystem = UGameViewportSubsystem::Get(GetWorld()))
+				{
+					FGameViewportWidgetSlot ViewportSlot = Subsystem->GetWidgetSlot(Info->Widget);
+					ViewportSlot.ZOrder = newZOrder;
+					Subsystem->SetWidgetSlot(Info->Widget, ViewportSlot);
+				}
+				else
+				{
+					Info->Widget->RemoveFromParent();
+					Info->Widget->AddToViewport(newZOrder);
+				}
 			}
-			Info->Widget->AddToViewport(newZOrder);
+			else
+			{
+				Info->Widget->AddToViewport(newZOrder);
+			}
 		}
 		Info->bRepaint = false;
 	}
@@ -469,6 +501,10 @@ void UUIFactory::SetVisibility(UWidgetStackInfo* StackInfo, bool bToShow)
 		UWidgetStackInfo* Info = WidgetStack[i];
 		if (Info->ZOrder < StackInfo->ZOrder && Info->ZOrder >= BottomZOrder)
 		{
+			if (Info->Widget == StackInfo->Widget)
+			{
+				continue;
+			}
 			if (bToShow)
 			{
 				Info->Widget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);

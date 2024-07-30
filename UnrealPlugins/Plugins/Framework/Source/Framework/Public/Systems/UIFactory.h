@@ -47,7 +47,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool Enable = true;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FString WidgetPath;
+	TSoftClassPtr<UUserWidget> Widget;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	EUILevel UILevel = EUILevel::Middle;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
