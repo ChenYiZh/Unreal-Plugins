@@ -16,28 +16,32 @@
 void UTableSystem::InitTables(const TArray<UTableScheme*>& InTables)
 {
 	Tables = InTables;
-	State.Set(static_cast<int32>(ETableSystemState::Created));
+	FPlatformAtomics::InterlockedExchange(&State, static_cast<int32>(ETableSystemState::Created));
 }
 
 void UTableSystem::ReadTables()
 {
-	if (State.GetValue() == static_cast<int32>(ETableSystemState::Created)
-		|| State.GetValue() == static_cast<int32>(ETableSystemState::Ready))
+	constexpr int32 Created = static_cast<int32>(ETableSystemState::Created);
+	constexpr int32 Ready = static_cast<int32>(ETableSystemState::Ready);
+	constexpr int32 Begin = static_cast<int32>(ETableSystemState::Begin);
+	if (FPlatformAtomics::InterlockedCompareExchange(&State, Begin, Created) == Created ||
+		FPlatformAtomics::InterlockedCompareExchange(&State, Begin, Ready) == Ready
+	)
 	{
-		State.Set(static_cast<int32>(ETableSystemState::Begin));
 		(new FAutoDeleteAsyncTask<FTableSystemBeginLoadingTask>(this))->StartBackgroundTask();
 	}
 }
 
 ETableSystemState UTableSystem::GetState() const
 {
-	return static_cast<ETableSystemState>(State.GetValue());
+	return static_cast<ETableSystemState>(State);
 }
 
 void UTableSystem::OnTick_Implementation(float DeltaTime)
 {
 	Super::OnTick_Implementation(DeltaTime);
-	if (State.GetValue() == static_cast<int32>(ETableSystemState::Loading))
+	constexpr int32 Loading = static_cast<int32>(ETableSystemState::Loading);
+	if (FPlatformAtomics::AtomicRead(&State) == Loading)
 	{
 		UFConsole::WriteWarnWithCategory(TEXT("Table System"), TEXT("TableSystem is Loading"), true, DeltaTime);
 		for (int i = Readers.Num() - 1; i >= 0; i--)
@@ -56,7 +60,7 @@ void UTableSystem::OnTick_Implementation(float DeltaTime)
 		}
 		if (Readers.IsEmpty())
 		{
-			State.Set(static_cast<int32>(ETableSystemState::Ready));
+			FPlatformAtomics::InterlockedExchange(&State, static_cast<int32>(ETableSystemState::Ready));
 			UEventSystem::SendEvent(this, UEventIdsBasic::GET_READY());
 		}
 	}
@@ -75,7 +79,8 @@ void UTableSystem::OnQuit_Implementation()
 
 bool UTableSystem::IsReady_Implementation()
 {
-	return State.GetValue() == static_cast<int32>(ETableSystemState::Ready);
+	constexpr int32 Ready = static_cast<int32>(ETableSystemState::Ready);
+	return FPlatformAtomics::AtomicRead(&State) == Ready;
 }
 
 void FTableSystemBeginLoadingTask::DoWork()
@@ -151,7 +156,7 @@ void FTableSystemBeginLoadingTask::DoWork()
 	ULoadingParam* Param = NewObject<ULoadingParam>(TableSystem);
 	Param->Progress = 0;
 	UEventSystem::SendEvent(TableSystem, UEventIdsBasic::LOADING_PROGRESS(), Param);
-	TableSystem->State.Set(static_cast<int32>(ETableSystemState::Loading));
+	FPlatformAtomics::InterlockedExchange(&TableSystem->State, static_cast<int32>(ETableSystemState::Loading));
 }
 
 TStatId FTableSystemBeginLoadingTask::GetStatId() const

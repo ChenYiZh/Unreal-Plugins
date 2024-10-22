@@ -38,40 +38,26 @@ class FOOLISHGAMES_API UByteUtil : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
-	/**
-	 * 1字节
-	 */
+	/** 1字节 */
 	inline constexpr static uint8 ONE = 1;
-	/**
-	 * 0字节
-	 */
+	/** 0字节 */
 	inline constexpr static uint8 ZERO = 0;
 
 public:
-	/**
-	 * 1字节
-	 */
+	/** 1字节 */
 	UFUNCTION(BlueprintPure, Category="Foolish Games|Byte", DisplayName="ONE")
 	static uint8 GetOne();
-	/**
-	 * 0字节
-	 */
+	/** 0字节 */
 	UFUNCTION(BlueprintPure, Category="Foolish Games|Byte", DisplayName="ZERO")
 	static uint8 GetZero();
 
 public:
-	/**
-	 * 深拷贝
-	 */
+	/** 深拷贝 */
 	static void BlockCopy(uint8* Src, const int32& SrcOffset, uint8* Dst, const int32& DstOffset, const int32& Count);
-	/**
-	 * 深拷贝
-	 */
+	/** 深拷贝 */
 	static void BlockCopy(uint8* Src, const int32& SrcOffset, TArray<uint8>& Dst, const int32& DstOffset,
 	                      const int32& Count);
-	/**
-	 * 深拷贝
-	 */
+	/** 深拷贝 */
 	static void BlockCopy(const TArray<uint8>& Src, const int32& SrcOffset, TArray<uint8>& Dst, const int32& DstOffset,
 	                      const int32& Count);
 
@@ -80,48 +66,26 @@ public:
 	 * 提取数组
 	 */
 	//static uint8* GetBytes(uint8* Src, const int32& StartIndex, int32 Length);
-	/**
-	 * 数据转换
-	 */
+	/** 数据转换 */
 	static void Convert(void* Dst, const TArray<uint8>& Src, const int32& StartIndex, int32 Length);
-	/**
-	 * 转 Boolean
-	 */
+	/** 转 Boolean */
 	static bool ToBoolean(const TArray<uint8>& Src, const int32& StartIndex);
-	/**
-	 * 转 Char
-	 */
+	/** 转 Char */
 	static TCHAR ToChar(const TArray<uint8>& Src, const int32& StartIndex);
-	/**
-	 * 转 Float
-	 */
+	/** 转 Float */
 	static float ToFloat(const TArray<uint8>& Src, const int32& StartIndex);
-	/**
-	 * 转 Double
-	 */
+	/** 转 Double */
 	static double ToDouble(const TArray<uint8>& Src, const int32& StartIndex);
-	/**
-	 * 转 Int16
-	 */
+	/** 转 Int16 */
 	static int16 ToInt16(const TArray<uint8>& Src, const int32& StartIndex);
-	/**
-	 * 转 Int32
-	 */
+	/** 转 Int32 */
 	static int32 ToInt32(const TArray<uint8>& Src, const int32& StartIndex);
-	/**
-	 * 转 Int64
-	 */
+	/** 转 Int64 */
 	static int64 ToInt64(const TArray<uint8>& Src, const int32& StartIndex);
-	/**
-	 * 转 UInt64
-	 */
+	/** 转 UInt64 */
 	static uint16 ToUInt16(const TArray<uint8>& Src, const int32& StartIndex);
-	/**
-	 * 转 UInt32
-	 */
+	/** 转 UInt32 */
 	static uint32 ToUInt32(const TArray<uint8>& Src, const int32& StartIndex);
-	/**
-	 * 转 UInt64
-	 */
+	/** 转 UInt64 */
 	static uint64 ToUInt64(const TArray<uint8>& Src, const int32& StartIndex);
 };

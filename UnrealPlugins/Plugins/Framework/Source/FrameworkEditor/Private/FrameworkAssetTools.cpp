@@ -7,6 +7,7 @@
 void FFrameworkAssetTools::StartupModule()
 {
 	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+#if 0
 	GameRootObjectAction = MakeShareable(new FAssetTypeActions_GameRoot);
 	GameRootObjectAction->Category
 		= AssetTools.RegisterAdvancedAssetCategory(
@@ -14,8 +15,9 @@ void FFrameworkAssetTools::StartupModule()
 			FText::FromString(TEXT("Foolish Game")
 			));
 	AssetTools.RegisterAssetTypeActions(GameRootObjectAction.ToSharedRef());
-	// ThumbnailAction = MakeShareable(new FAssetTypeActions_BlueprintThumbnail);
-	// AssetTools.RegisterAssetTypeActions(ThumbnailAction.ToSharedRef());
+#endif
+	ThumbnailAction = MakeShareable(new FAssetTypeActions_BlueprintThumbnail);
+	AssetTools.RegisterAssetTypeActions(ThumbnailAction.ToSharedRef());
 }
 
 void FFrameworkAssetTools::ShutdownModule()
@@ -23,7 +25,9 @@ void FFrameworkAssetTools::ShutdownModule()
 	if (FModuleManager::Get().IsModuleLoaded("AssetTools"))
 	{
 		IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+#if 0
 		AssetTools.UnregisterAssetTypeActions(GameRootObjectAction.ToSharedRef());
-		//AssetTools.UnregisterAssetTypeActions(ThumbnailAction.ToSharedRef());
+#endif
+		AssetTools.UnregisterAssetTypeActions(ThumbnailAction.ToSharedRef());
 	}
 }

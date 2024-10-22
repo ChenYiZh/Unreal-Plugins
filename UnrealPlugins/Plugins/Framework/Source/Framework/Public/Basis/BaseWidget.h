@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Defines/EnumDefines.h"
 #include "Systems/UIFactory.h"
+#include "Misc/EngineVersionComparison.h"
 #include "BaseWidget.generated.h"
 
 /************************************************************
@@ -177,16 +178,12 @@ public:
 	void SetKeyName(const FName& InKeyName);
 
 private:
-	/**
-	 * 是否根据刘海屏进行适配
-	 */
+	/** 是否根据刘海屏进行适配 */
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess), Category="Config")
 	EScreenAdapter ScreenAdapter = EScreenAdapter::Auto;
 
 public:
-	/**
-	 * 打开这个界面时的鼠标状态
-	 */
+	/** 打开这个界面时的鼠标状态 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Config")
 	EMouseType MouseType = EMouseType::Default;
 
@@ -244,21 +241,15 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
-	/**
-	 * 修改Widget显示大小
-	 */
+	/** 修改Widget显示大小 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Resize();
 
-	/**
-	 * 获取Widget最后固定的Anchor边距
-	 */
+	/** 获取Widget最后固定的Anchor边距 */
 	UFUNCTION(BlueprintCallable)
 	FAnchors GetStableAnchors();
 
-	/**
-	 * Widget是否使用刘海屏
-	 */
+	/** Widget是否使用刘海屏 */
 	UFUNCTION(BlueprintPure, Exec)
 	bool UseHairScreen() const;
 
@@ -266,12 +257,14 @@ public:
 	bool UseWideScreen() const;
 
 protected:
-	/**
-	 * 填充Widget，并且必须是CanvasPanelSlot
-	 */
+	/** 填充Widget，并且必须是CanvasPanelSlot */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ResizeStableFillWidgets();
 
+#if UE_VERSION_OLDER_THAN(5, 1, 0)
 public:
-	//virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
+	virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override
+	{
+	}
+#endif
 };

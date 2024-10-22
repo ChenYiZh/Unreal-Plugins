@@ -47,7 +47,7 @@ class FRAMEWORK_API UTableSystem : public USystemBasis
 
 private:
 	//UPROPERTY()
-	FThreadSafeCounter State = static_cast<int32>(ETableSystemState::Invalid);
+	int32 State = static_cast<int32>(ETableSystemState::Invalid);
 
 private:
 	UPROPERTY()

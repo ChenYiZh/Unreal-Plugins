@@ -8,6 +8,7 @@
 #include "Systems/AudioSystem.h"
 #include "Systems/BlueprintBridgeUtilsBase.h"
 #include "Utilities/TextUtility.h"
+#include "Misc/EngineVersionComparison.h"
 #if WITH_EDITOR
 #include "Editor/EditorEngine.h"
 #include "Editor/UnrealEdEngine.h"
@@ -21,12 +22,16 @@ void UDefaultGameInstance::InitGameRoot(const UObject* WorldContextObject)
 	{
 		if (Instance)
 		{
-			/*** 5.1修改防止UI在加载场景时移除 ***/
-			//FWorldDelegates::LevelRemovedFromWorld.RemoveAll(GetSubsystem<UGameViewportSubsystem>(Instance));
+#if UE_VERSION_NEWER_THAN(5, 2, 0)
 			/*** 5.2修改防止UI在加载场景时移除 ***/
 			FWorldDelegates::OnWorldCleanup.RemoveAll(UGameViewportSubsystem::Get());
 			FWorldDelegates::OnWorldBeginTearDown.RemoveAll(UGameViewportSubsystem::Get());
 			FWorldDelegates::OnPreWorldFinishDestroy.RemoveAll(UGameViewportSubsystem::Get());
+#elif UE_VERSION_NEWER_THAN(5, 1, 0)
+			/*** 5.1修改防止UI在加载场景时移除 ***/
+			FWorldDelegates::LevelRemovedFromWorld.RemoveAll(GetSubsystem<UGameViewportSubsystem>(Instance));
+#endif
+
 			/***** 初始化逻辑 *****/
 			UClass* GameRootClass = UGameRoot::StaticClass();
 			UClass* BlueprintBridgeClass = UBlueprintBridgeUtilsBase::StaticClass();

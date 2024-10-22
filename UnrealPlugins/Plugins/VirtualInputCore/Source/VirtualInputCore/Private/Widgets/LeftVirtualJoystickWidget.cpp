@@ -83,7 +83,13 @@ void ULeftVirtualJoystickWidget::OnTick_Implementation(float DeltaTime)
 	float DeltaWheel = 0;
 	if (RightScaleJoystickMoving)
 	{
-		DeltaWheel = (RightJoystickEvent.DeltaScreenPosition - RightScaleJoystickEvent.DeltaScreenPosition).Length();
+		FVector2D RightJoystickDirection = RightJoystickEvent.CurrentScreenPosition
+			- RightScaleJoystickEvent.StartScreenPosition;
+		RightJoystickDirection.Normalize();
+		FVector2D RightJoystickDeltaDir = RightJoystickEvent.DeltaScreenPosition;
+		RightJoystickDeltaDir.Normalize();
+		float Dir = FVector2D::DotProduct(RightJoystickDirection, RightJoystickDeltaDir) > 0 ? 1 : -1;
+		DeltaWheel = RightJoystickEvent.DeltaScreenPosition.Length() * Dir * RightJoystickWheelScale;
 	}
 	DeltaWheel *= 0.1f;
 	MouseWheelAnalog(DeltaWheel);

@@ -14,6 +14,7 @@ UCLASS(Blueprintable, BlueprintType)
 class VIRTUALINPUTCORE_API ULeftVirtualJoystickWidget : public UVirtualJoystickWidget
 {
 	GENERATED_BODY()
+
 public:
 	/* 右摇杆是否反向 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Configs")
@@ -36,9 +37,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category="Configs")
 	FVector2D LeftJoystickOffset = FVector2D::Zero();
-
+	/** 触屏模拟视角调整的缩放 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Configs")
-	float RightJoystickMoveScale = 1.f;
+	FVector2D RightJoystickMoveScale = FVector2D::UnitVector;
+	/** 触屏模拟滚轮的缩放 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Configs")
+	float RightJoystickWheelScale = 1.f;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category="Configs|Variables")
 	float LeftJoystickMoveRange;

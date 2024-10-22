@@ -219,21 +219,23 @@ EPlatform UGameDefines::AnalysisPlatform()
 	// }
 	// return GameConsole;
 
-	if constexpr (PLATFORM_HOLOLENS)
+#if PLATFORM_HOLOLENS
 	{
 		return EPlatform::HoloLens;
 	}
-	if constexpr (PLATFORM_SWITCH || PLATFORM_FREEBSD || PLATFORM_TVOS || PLATFORM_UNIX)
+#elif (PLATFORM_SWITCH || PLATFORM_FREEBSD || PLATFORM_TVOS || PLATFORM_UNIX)
 	{
 		return EPlatform::GameConsole;
 	}
-	if constexpr (PLATFORM_IOS || PLATFORM_ANDROID)
+#elif (PLATFORM_IOS || PLATFORM_ANDROID)
 	{
 		return EPlatform::Mobile;
 	}
-	if constexpr (PLATFORM_MAC || PLATFORM_WINDOWS || PLATFORM_DESKTOP || PLATFORM_LINUX)
+#elif (PLATFORM_MAC || PLATFORM_WINDOWS || PLATFORM_DESKTOP || PLATFORM_LINUX)
 	{
 		return EPlatform::Desktop;
 	}
+#else
 	return EPlatform::GameConsole;
+#endif
 }

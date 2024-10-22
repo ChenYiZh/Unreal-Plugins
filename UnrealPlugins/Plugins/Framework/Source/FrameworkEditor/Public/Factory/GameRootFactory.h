@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
+#if 0
 #include "CoreMinimal.h"
 #include "AssetTypeActions_Base.h"
 #include "GameRoot.h"
@@ -51,3 +51,4 @@ public:
 
 	virtual const FSlateBrush* GetIconBrush(const FAssetData& InAssetData, const FName InClassName) const override;
 };
+#endif

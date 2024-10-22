@@ -83,36 +83,16 @@ UDefaultGameInstance* UGameRoot::GetGameInstance(const UObject* WorldContextObje
                                                  TSubclassOf<UDefaultGameInstance> Class)
 {
 	return WorldContextObject->GetWorld()->GetGameInstance<UDefaultGameInstance>();
-	//return Root->GameInstance;
-	//return UDefaultGameInstance::GetInstance();
 }
 
 UGameRoot* UGameRoot::GetRoot(const UObject* WorldContextObject, TSubclassOf<UGameRoot> Class)
 {
 	return GetGameInstance(WorldContextObject)->GameRoot;
-	// if (UDefaultGameInstance* Instance = GetGameInstance())
-	// {
-	// 	return Instance->MainClass;
-	// }
-	// return nullptr;
-	// if (UWorld* World = UWorldUtility::FindGameWorld())
-	// {
-	// 	if (UDefaultGameInstance* GameInstance = Cast<UDefaultGameInstance>(World->GetGameInstance()))
-	// 	{
-	// 		return GameInstance->MainClass;
-	// 	}
-	// }
-	// return nullptr;
 }
 
 EGameRootState UGameRoot::GetState(const UObject* WorldContextObject)
 {
 	return GetRoot(WorldContextObject)->State;
-	// if (UMainClass* MainClass = GetRoot())
-	// {
-	// 	return MainClass->State;
-	// }
-	// return EMainClassState::Invalid;
 }
 
 UGameDefines* UGameRoot::GetGameDefines(const UObject* WorldContextObject, TSubclassOf<UGameDefines> Class)
@@ -266,6 +246,7 @@ void UGameRoot::OnInitialize_Implementation()
 
 bool UGameRoot::Tick(float DeltaTime)
 {
+	if (IsEngineExitRequested()) { return false; }
 	if (IsValid(GameDefines))
 	{
 		UKismetMaterialLibrary::SetScalarParameterValue(GetWorld(), GameDefines->GetMPC_Framework(), FName("IsGame"),
@@ -331,13 +312,15 @@ void UGameRoot::Shutdown()
 	// 	Super::Shutdown();
 	// 	return;
 	// }
+	
+	FTSTicker::GetCoreTicker().RemoveTicker(TickHandler);
 	State = EGameRootState::Shutdown;
 	UnregistEvents();
 	OnQuit();
 	Systems.Empty();
 	UFConsole::RemoveLogger(Singleton<UUELogger>(this));
 	UObjectFactory::RemoveAllSingletons(this);
-	FTSTicker::GetCoreTicker().RemoveTicker(TickHandler);
+	
 	//Root = nullptr;
 	//UWorldUtility::ClearCache();
 	//Super::Shutdown();
@@ -478,6 +461,7 @@ void UGameRoot::OnTick_Implementation(float DeltaTime)
 {
 	for (auto system : Systems)
 	{
+		if (IsEngineExitRequested()) { return; }
 		if (State == EGameRootState::Initialized
 			|| (State == EGameRootState::Starting && system->EnableTickBeforeInitialized()))
 		{
@@ -499,6 +483,7 @@ void UGameRoot::OnEverySecond_Implementation()
 {
 	for (auto system : Systems)
 	{
+		if (IsEngineExitRequested()) { return; }
 		if (State == EGameRootState::Initialized
 			|| (State == EGameRootState::Starting && system->EnableTickBeforeInitialized()))
 		{

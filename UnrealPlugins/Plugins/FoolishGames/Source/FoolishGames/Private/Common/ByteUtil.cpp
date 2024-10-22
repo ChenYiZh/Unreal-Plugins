@@ -41,39 +41,24 @@ uint8 UByteUtil::GetZero()
 
 void UByteUtil::BlockCopy(uint8* Src, const int32& SrcOffset, uint8* Dst, const int32& DstOffset, const int32& Count)
 {
-	for (int i = 0; i < Count; i++)
-	{
-		Dst[DstOffset + i] = Src[SrcOffset + i];
-	}
+	FMemory::Memcpy(&Dst[DstOffset], &Src[SrcOffset], Count);
+	// for (int i = 0; i < Count; i++)
+	// {
+	// 	Dst[DstOffset + i] = Src[SrcOffset + i];
+	// }
 }
 
 void UByteUtil::BlockCopy(uint8* Src, const int32& SrcOffset, TArray<uint8>& Dst, const int32& DstOffset,
                           const int32& Count)
 {
 	FMemory::Memcpy(&Dst.GetData()[DstOffset], &Src[SrcOffset], Count);
-	// for (int i = 0; i < Count; i++)
-	// {
-	// 	Dst[DstOffset + i] = Src[SrcOffset + i];
-	// }
 }
 
 void UByteUtil::BlockCopy(const TArray<uint8>& Src, const int32& SrcOffset, TArray<uint8>& Dst, const int32& DstOffset,
                           const int32& Count)
 {
 	FMemory::Memcpy(&Dst.GetData()[DstOffset], &Src.GetData()[SrcOffset], Count);
-	// for (int i = 0; i < Count; i++)
-	// {
-	// 	Dst[DstOffset + i] = Src[SrcOffset + i];
-	// }
 }
-
-// uint8* UByteUtil::GetBytes(uint8* Src, const int32& StartIndex, int32 Length)
-// {
-// 	TArray<uint8> Value;
-// 	Value.SetNumUninitialized(Length);
-// 	BlockCopy(Src, StartIndex, Value, 0, Length);
-// 	return Value.GetData();
-// }
 
 void UByteUtil::Convert(void* Dst, const TArray<uint8>& Src, const int32& StartIndex, int32 Length)
 {

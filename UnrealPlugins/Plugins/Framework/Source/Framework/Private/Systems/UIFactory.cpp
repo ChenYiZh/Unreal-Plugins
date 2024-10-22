@@ -571,6 +571,10 @@ void UUIFactory::InitModules()
 void UUIFactory::OnTick_Implementation(float DeltaTime)
 {
 	Super::OnTick_Implementation(DeltaTime);
+	if (!GEngine->GetWorldContextFromWorld(GetWorld()))
+	{
+		return;
+	}
 	const FVector2D CurrentSize = UGraphicUtility::GetScreenSize(this);
 	const bool bSizeChanged = !ScreenSize.Equals(CurrentSize);
 	if (bSizeChanged)

@@ -1,5 +1,5 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
-
+#if 0
 
 #include "Factory/GameRootFactory.h"
 
@@ -120,3 +120,4 @@ const FSlateBrush* FAssetTypeActions_GameRoot::GetIconBrush(const FAssetData& In
 }
 
 #undef LOCTEXT_NAMESPACE
+#endif

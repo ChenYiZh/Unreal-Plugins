@@ -10,6 +10,9 @@
 #include "Systems/BlueprintBridgeUtilsBase.h"
 #include "Systems/TableSystem.h"
 #include "UObject/NoExportTypes.h"
+
+#include "Misc/EngineVersionComparison.h"
+
 #include "GameDefines.generated.h"
 
 /** 命令行指令配置 */
@@ -381,7 +384,11 @@ public:
 	UFUNCTION(Exec, BlueprintPure, Category="Framework", DisplayName="PlayInEditorID")
 	static int32 GetPlayInEditorID()
 	{
+#if UE_VERSION_OLDER_THAN(5, 5, 0)
 		return GPlayInEditorID;
+#else
+		return UE::GetPlayInEditorID();
+#endif
 	}
 #pragma endregion
 

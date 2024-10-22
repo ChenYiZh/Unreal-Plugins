@@ -34,7 +34,8 @@ bool UObjectBuilder::IsBlueprintName(const FString& ClassName)
 	return ClassName.Contains("'");
 }
 
-UObject* UObjectBuilder::CreateObjectByName(const FString& ClassName, TSubclassOf<UObject> SubClass)
+UObject* UObjectBuilder::CreateObjectByName(UObject* WorldContextObject, const FString& ClassName,
+                                            TSubclassOf<UObject> SubClass)
 {
 	FScopeLock SetLock(&Mutex);
 	if (!Types.Contains(ClassName))
@@ -67,7 +68,9 @@ UObject* UObjectBuilder::CreateObjectByName(const FString& ClassName, TSubclassO
 		FStaticConstructObjectParameters Params(Class);
 		Types.Add(ClassName, Params);
 	}
-	return StaticConstructObject_Internal(Types[ClassName]);
+	FStaticConstructObjectParameters Params = Types[ClassName];
+	Params.Outer = WorldContextObject;
+	return StaticConstructObject_Internal(Params);
 }
 
 // void UObjectBuilder::FindAllBlueprintClassFromPath(TArray<UClass*>& Result, const FString& Path,

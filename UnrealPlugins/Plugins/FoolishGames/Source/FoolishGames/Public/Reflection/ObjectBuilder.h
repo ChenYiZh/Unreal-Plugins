@@ -37,6 +37,7 @@ UCLASS(DisplayName="Object Builder")
 class FOOLISHGAMES_API UObjectBuilder : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
+
 private:
 	/**
 	 * 缓存池
@@ -46,6 +47,7 @@ private:
 	 * 线程锁
 	 */
 	inline static FCriticalSection Mutex;
+
 public:
 	/**
 	 * 判断名称是不是蓝图
@@ -55,8 +57,10 @@ public:
 	/**
 	 * 自动搜索创建，蓝图使用时必须是同步执行
 	 */
-	UFUNCTION(BlueprintCallable, Category="Foolish Games|Object Builder", DisplayName="Create", meta=(DeterminesOutputType="SubClass"))
-	static UObject* CreateObjectByName(const FString& ClassName, TSubclassOf<UObject> SubClass = nullptr);
+	UFUNCTION(BlueprintCallable, Category="Foolish Games|Object Builder", DisplayName="Create",
+		meta=(bIgnoreSelf = "true", WorldContext="WorldContextObject", DeterminesOutputType="SubClass"))
+	static UObject* CreateObjectByName(UObject* WorldContextObject, const FString& ClassName,
+	                                   TSubclassOf<UObject> SubClass = nullptr);
 
 	// /**
 	//  * 查询某个目录下的所有蓝图
@@ -68,9 +72,9 @@ public:
 	 * 自动搜索创建
 	 */
 	template <typename T>
-	static T* Create(const FString& ClassName)
+	static T* Create(UObject* WorldContextObject, const FString& ClassName)
 	{
-		return Cast<T>(CreateObjectByName(ClassName));
+		return Cast<T>(CreateObjectByName(WorldContextObject, ClassName));
 	}
 
 	// /**

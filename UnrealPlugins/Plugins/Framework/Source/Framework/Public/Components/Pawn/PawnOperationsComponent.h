@@ -37,7 +37,7 @@ public:
 
 #pragma region 默认组件
 
-private:
+public:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Camera",
 		meta = (DisplayPriority=-1, AllowPrivateAccess = "true"))
