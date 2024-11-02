@@ -570,6 +570,10 @@ void UUIFactory::InitModules()
 
 void UUIFactory::OnTick_Implementation(float DeltaTime)
 {
+	if (IsEngineExitRequested())
+	{
+		return;
+	}
 	Super::OnTick_Implementation(DeltaTime);
 	if (!GEngine->GetWorldContextFromWorld(GetWorld()))
 	{
